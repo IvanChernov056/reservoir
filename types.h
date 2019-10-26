@@ -11,4 +11,7 @@ using   SpMat_t  = arma::sp_mat;
 #include    <vector>
 using       Data_t = std::vector<Column_t>;
 
+
+using   Activation_t = void (*)(double &x);
+
 #endif
