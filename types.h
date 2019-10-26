@@ -9,6 +9,6 @@ using   Row_t    = arma::rowvec;
 using   SpMat_t  = arma::sp_mat;
 
 #include    <vector>
-
+using       Data_t = std::vector<Column_t>;
 
 #endif
