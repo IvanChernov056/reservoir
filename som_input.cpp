@@ -17,19 +17,16 @@ namespace nn {
     }
 
 
-    SomInp::SomInp(int i_in, int i_d, int i_out) {
-        d_w1 = arma::randn<Matrix_t> (i_d, i_in);
-        d_w2 = arma::randn<Matrix_t> (i_out, i_d);
+    SomInput::SomInput(int i_in, int i_d, int i_out) : SimpleInput(i_out, i_d) {
+        d_w2 = arma::randn<Matrix_t> (i_d, i_in);
     }
 
-    Column_t SomInp::operator()(const Column_t& i_x) {
-        Column_t h = d_w1*i_x;
-        Column_t y = d_w2*h;
-        // std::cout << "operator ok\n";
-        return y;
+    Column_t SomInput::operator()(const Column_t& i_x) {
+        Column_t h = d_w2*i_x;
+        return SimpleInput::operator()(h);
     }
 
-    bool  SomInp::fit (const Data_t& i_inp, int i_iterations) {
+    bool  SomInput::fit (const Data_t& i_inp, int i_iterations) {
         double  speed = 0.01;
         double  rd_sp = 0.8;
         double  disp  = 10;
@@ -38,21 +35,23 @@ namespace nn {
         for (int iter = 0; iter < i_iterations; ++iter) {
             for (const auto& v : i_inp) {
                 // std::cout << "?>n";
-                Column_t h = d_w1*v;
+                Column_t h = d_w2*v;
                 // std::cout << "?<n";
                 int idx_max = h.index_max();
 
                 Column_t    map = calc_map(idx_max, disp, h.n_elem);
 
-                for (int i = 0; i < d_w1.n_rows; ++i) {
-                    d_w1.row(i) += speed*map[i]*(v.t() - d_w1.row(i));
+                for (int i = 0; i < d_w2.n_rows; ++i) {
+                    d_w2.row(i) += speed*map[i]*(v.t() - d_w2.row(i));
                 }
 
             }
 
             disp *= rd_dsp;
             speed *= rd_sp;
-            std::cout << "iter : " << iter +1 << '\n';
+            if (iter % 100 == 0)
+                std::cout << "iter : " << iter+1 << '\n';
         }
+        std::cout << "last iter : " << i_iterations << '\n';
     }
 }
