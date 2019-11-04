@@ -14,4 +14,8 @@ using       Data_t = std::vector<Column_t>;
 
 using   Activation_t = void (*)(double &x);
 
+#include    <utility>
+using   DataSet = std::tuple<Data_t, Data_t, Data_t, Data_t, Data_t>;
+using   SettingsSet = std::tuple<int, int, int, int, int>;
+
 #endif

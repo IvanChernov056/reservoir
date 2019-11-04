@@ -18,7 +18,7 @@ namespace nn {
 
         public:
 
-            ESNReservoir(int i_nr, double i_sp = 0.05, Activation_t i_f = [](double& x){x = tanh(x);});
+            ESNReservoir(int i_nr, double i_sp = 0.03, Activation_t i_f = [](double& x){x = tanh(x);});
             ~ESNReservoir(){}
 
             Column_t operator()(const Column_t& i_x) override;

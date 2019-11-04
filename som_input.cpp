@@ -17,7 +17,7 @@ namespace nn {
     }
 
 
-    SomInput::SomInput(int i_in, int i_d, int i_out) : SimpleInput(i_out, i_d) {
+    SomInput::SomInput(int i_in, int i_d, int i_out) : SimpleInput(i_d, i_out) {
         d_w2 = arma::randn<Matrix_t> (i_d, i_in);
     }
 
@@ -50,8 +50,10 @@ namespace nn {
             disp *= rd_dsp;
             speed *= rd_sp;
             if (iter % 100 == 0)
-                std::cout << "iter : " << iter+1 << '\n';
+                std::cout << "iter : " << iter+1 << " / " << i_iterations << '\n';
         }
-        std::cout << "last iter : " << i_iterations << '\n';
+        std::cout << "last iter : " << i_iterations << " / " << i_iterations << '\n';
+
+        return true;
     }
 }

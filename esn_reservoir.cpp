@@ -10,11 +10,11 @@ namespace nn {
     }
 
     Column_t ESNReservoir::operator()(const Column_t& i_x) {
-        Column_t h = d_wr*d_state + i_x + d_b;
-        return h.for_each(d_f);
+        d_state = d_wr*d_state + i_x + d_b;
+        return d_state.for_each(d_f);
     }
 
     bool    ESNReservoir::fit(const Data_t& i_inp, int iterations) {
-        return !predict(i_inp).empty();
+        return !d_wr.empty();
     }
 }

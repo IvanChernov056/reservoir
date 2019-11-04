@@ -15,7 +15,7 @@ namespace nn {
 
         public:
 
-            RidgeReadout(int i_in, int i_out, double i_ridge);
+            RidgeReadout(int i_in, int i_out, double i_ridge = 0.03);
 
             Column_t    operator()(const Column_t& i_x) override;
             bool        fit(const Data_t& i_inp, const Data_t& i_out, int i_iterations = 1) override;

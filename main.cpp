@@ -1,29 +1,39 @@
-#include    "som_input.h"
-#include    "esn_reservoir.h"
-#include    "timer.h"
-#include    "ridge_readout.h"
-#include    <iostream>
-
-
+#include    "nnlib.h"
+#include    <fstream>
 
 int main (int argc, char* argv[]) {
 
 
-    int         ni = 1, nd = 40, nr = 50, T = 1000;
-    nn::RidgeReadout    rd (nd, nr, 0.03);
-
-    Data_t  inp;
-    Data_t  out;
-    for (int t = 0; t < T; ++t) {
-        inp.push_back(arma::randn<Column_t>(nd));
-        out.push_back(arma::randn<Column_t>(nr));
-    }
-
-    Data_t  pred;
-    if (rd.fit(inp, out))
-        pred = rd.predict(inp);
+    int         datasetsNum = 130;
+    int         ni = 1, nr = 400, no = 1, T1 = 1500, T2 = 2000, T3 = 200;
+    std::ofstream   outFile("mgs1_3u_sim_esn_rid_log_130_msre.dat");
     
-    std::cout << ((pred.empty()) ? "all is bad\n" : "good\n");
+    nn::DataLoader  dataLoader ("mgs1.dat");
 
+    nn::Conveyor conveyor;
+
+    std::unique_ptr<nn::IUnit> inpUnit (new nn::SimpleInput(ni, nr));    //nr/4
+    std::unique_ptr<nn::IUnit> resUnit (new nn::ESNReservoir(nr, 0.03, [](double& x){x=1.0/(1 + exp(-x));}));
+    std::unique_ptr<nn::IUnit> outUnit (new nn::RidgeReadout(nr, no, 0.03));
+
+    conveyor.addUnit(std::move(inpUnit));
+    conveyor.addUnit(std::move(resUnit));
+    conveyor.addUnit(std::move(outUnit));
+
+    std::vector<int>    settings{500, 1, 1};
+
+    for (int dsNum=0; dsNum < datasetsNum; ++dsNum) {
+        try {
+            std::cout << "dataset #" << dsNum << '\n';
+            dataLoader.formDataSet({ni, no, T1, T2, T3});
+            conveyor.test(dataLoader.get(dsNum), settings, outFile);
+            std::cout << "\n\n";
+        } catch (std::exception& e) {
+            std::cout << e.what() << std::endl;
+            break;
+        }
+    }
+    outFile.close();
+    
     return 0;
 }
