@@ -3,7 +3,7 @@
 namespace nn {
 
     namespace {
-        Matrix_t    formMatrix (const Data_t& i_inp, bool i_withOnes = false) {
+        static Matrix_t    formMatrix (const Data_t& i_inp, bool i_withOnes = false) {
             int T = i_inp.size();
             int N = i_inp[0].n_elem;
 

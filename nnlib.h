@@ -2,8 +2,8 @@
 #define     NNLIB_H
 
 
-#include    "som_input.h"
-#include    "simple_input.h"
+#include    "som_layer.h"
+#include    "simple_layer.h"
 #include    "esn_reservoir.h"
 #include    "timer.h"
 #include    "ridge_readout.h"
