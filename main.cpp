@@ -11,7 +11,7 @@ int main (int argc, char* argv[]) {
     nn::DataLoader  dataLoader ("mgs1.dat");
 
     nn::Conveyor conveyor;
-
+// koment
     std::unique_ptr<nn::IUnit> inpUnit (new nn::SimpleLayer(ni, nr));    //nr/4
     std::unique_ptr<nn::IUnit> resUnit (new nn::ESNReservoir(nr, 0.03, [](double& x){x=1.0/(1 + exp(-x));}));
     std::unique_ptr<nn::IUnit> reducUnit (new nn::SomLayer(nr, nr/2, nr/4));
