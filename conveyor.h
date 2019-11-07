@@ -19,11 +19,11 @@ namespace nn {
 
             void addUnit (UnitPtr i_unit);
 
-            bool    fit (Data_t i_inp, const std::vector<int>& i_iterations);
+            bool    fit (Data_t i_inp, int i_iterations);
             bool    learn (Data_t i_inp, const Data_t& i_out, int iterations);
             Data_t  predict (Data_t i_inp);
 
-            bool    test(const DataSet& i_dataset, const std::vector<int>& i_settings, std::ostream& io_os);
+            bool    test(const DataSet& i_dataset, int i_iterations, std::ostream& io_os);
     };
 }
 

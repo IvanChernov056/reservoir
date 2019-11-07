@@ -8,7 +8,7 @@ namespace nn {
         d_units.push_back(std::move(i_unit));
     }
 
-    bool    Conveyor::fit (Data_t i_inp, const std::vector<int>& i_iterations) {
+    bool    Conveyor::fit (Data_t i_inp, int i_iterations) {
         std::cout << "fit stage :\n";
         int     numUnits = d_units.size();
         if (numUnits == 0)
@@ -16,7 +16,7 @@ namespace nn {
         
         for (int unit = 0; unit < numUnits-1; ++unit) {
             try {
-            if(!d_units[unit]->fit(i_inp, i_iterations[unit]))
+            if(!d_units[unit]->fit(i_inp, i_iterations))
                 return false;
             i_inp = d_units[unit]->predict(i_inp);
             } catch (std::exception& e) {
@@ -48,13 +48,13 @@ namespace nn {
         return i_inp;
     }
 
-    bool    Conveyor::test (const DataSet& i_dataset, const std::vector<int>& i_settings, std::ostream& io_os) {
+    bool    Conveyor::test (const DataSet& i_dataset, int i_iterations, std::ostream& io_os) {
         
         Timer timer;
-        bool fitResult = fit(std::get<0>(i_dataset), i_settings);
+        bool fitResult = fit(std::get<0>(i_dataset), i_iterations);
         std::cout << "fit result : " << (fitResult ? "success" : "fail") << '\n';
 
-        bool learnResult = learn(std::get<1>(i_dataset), std::get<2>(i_dataset), i_settings[i_settings.size()-1]);
+        bool learnResult = learn(std::get<1>(i_dataset), std::get<2>(i_dataset), i_iterations);
         std::cout << "learn result : " << (learnResult ? "success" : "fail") << '\n';
 
         Data_t  out = predict(std::get<3>(i_dataset));
