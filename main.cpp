@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
 
     nn::Conveyor conveyor;
 
-    std::unique_ptr<nn::IUnit> inpUnit (new nn::SimpleLayer(ni, nr));    //nr/4
+    std::unique_ptr<nn::IUnit> inpUnit (new nn::SomLayer(nr/10, nr));    //nr/4
     std::unique_ptr<nn::IUnit> resUnit (new nn::ESNReservoir(nr, 0.03, [](double& x){x=1.0/(1 + exp(-x));}));
     std::unique_ptr<nn::IUnit> reduceUnit (new nn::PcaReducer());
     std::unique_ptr<nn::IUnit> outUnit (new nn::RidgeReadout(no, 0.03));

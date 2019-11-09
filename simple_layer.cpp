@@ -2,11 +2,25 @@
 
 
 namespace nn {
-    SimpleLayer::SimpleLayer(int i_in, int i_out) {
+    SimpleLayer::SimpleLayer(int i_in, int i_out) : d_neuronsCount(i_out) {
         d_w1 = arma::randn<Matrix_t>(i_out, i_in);
     }
-
+    SimpleLayer::SimpleLayer(int i_neurosCount) : d_neuronsCount(i_neurosCount)
+        {}
     Column_t    SimpleLayer::operator()(const Column_t& i_x) {
         return d_w1*i_x;
+    }
+
+    bool    SimpleLayer::fit (const Data_t& i_inp, int i_iterations ) {
+        if(!d_w1.empty()) return true;
+        
+        try {
+            if (i_inp.empty()) throw std::runtime_error("input data is empty");
+            d_w1 = arma::randn<Matrix_t>(d_neuronsCount, i_inp[0].n_elem);
+        } catch (std::exception& e) {
+            std::cout << e.what() << std::endl;
+            return false;
+        }
+        return true;
     }
 }

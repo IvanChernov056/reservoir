@@ -17,9 +17,12 @@ namespace nn {
     }
 
 
-    SomLayer::SomLayer(int i_in, int i_d, int i_out) : SimpleLayer(i_d, i_out) {
+    SomLayer::SomLayer(int i_in, int i_d, int i_out) : SimpleLayer(i_d, i_out), d_d(i_d) {
         d_w2 = arma::randn<Matrix_t> (i_d, i_in);
     }
+
+    SomLayer::SomLayer(int i_d, int i_neuronsCount) : 
+        SimpleLayer(i_d, i_neuronsCount), d_d(i_d) {}
 
     Column_t SomLayer::operator()(const Column_t& i_x) {
         Column_t h = d_w2*i_x;
@@ -27,6 +30,14 @@ namespace nn {
     }
 
     bool  SomLayer::fit (const Data_t& i_inp, int i_iterations) {
+        try {
+            if (i_inp.empty()) throw std::runtime_error("input data is empty");
+            d_w2 = arma::randn<Matrix_t>(d_d, i_inp[0].n_elem);
+        } catch (std::exception& e) {
+            std::cout << e.what() << std::endl;
+            return false;
+        }
+
         double  speed = 0.01;
         double  rd_sp = 0.8;
         double  disp  = 10;
