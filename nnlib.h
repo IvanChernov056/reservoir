@@ -8,6 +8,7 @@
 #include    "timer.h"
 #include    "ridge_readout.h"
 #include    "conveyor.h"
+#include    "pca_reducer.h"
 #include    "data_loader.h"
 #include    "global_functions.h"
 

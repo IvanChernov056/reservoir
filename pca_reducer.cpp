@@ -31,7 +31,7 @@ namespace nn {
             mean /= (double)X.n_cols;
             X.each_col([&mean](Column_t& v){v -= mean;});
             Matrix_t    covMat = X*X.t();
-            double      kazerKrit = arma::trace(covMat) / covMat.n_rows;
+            double      criterion = arma::trace(covMat) / covMat.n_elem;
 
 
             Matrix_t    eigVec;
@@ -39,15 +39,20 @@ namespace nn {
             arma::eig_sym(eigVal, eigVec, covMat);
 
             Data_t      condidates;
-            for (int i = 0; i < eigVal.n_elem; ++i)
-                if(eigVal[i] > kazerKrit)
+            for (int i = 0; i < eigVal.n_elem; ++i) {
+                if(eigVal[i] > criterion)
                     condidates.push_back((Column_t)eigVec[i]);
+            }
             
             d_w = formMatrix(condidates).t();
+            d_d = d_w.n_rows;
+            std::cout << "pca reducer reduce inpSize : " << i_inp[0].n_elem 
+                    << " to : " << d_d << '\n';
         } catch (std::exception& e) {
             std::cout << e.what() << std::endl;
             return false;
         }
+
 
         return true;
     }

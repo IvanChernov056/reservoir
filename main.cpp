@@ -5,7 +5,7 @@ int main (int argc, char* argv[]) {
 
 
     int         datasetsNum = 10;
-    int         ni = 1, nr = 40, no = 1, T1 = 1500, T2 = 2000, T3 = 200;
+    int         ni = 1, nr = 400, no = 1, T1 = 1500, T2 = 2000, T3 = 200;
     std::ofstream   outFile("THIS MUST BE DELETED.dat");
     
     nn::DataLoader  dataLoader ("mgs1.dat");
@@ -14,10 +14,12 @@ int main (int argc, char* argv[]) {
 
     std::unique_ptr<nn::IUnit> inpUnit (new nn::SimpleLayer(ni, nr));    //nr/4
     std::unique_ptr<nn::IUnit> resUnit (new nn::ESNReservoir(nr, 0.03, [](double& x){x=1.0/(1 + exp(-x));}));
+    std::unique_ptr<nn::IUnit> reduceUnit (new nn::PcaReducer());
     std::unique_ptr<nn::IUnit> outUnit (new nn::RidgeReadout(no, 0.03));
 
     conveyor.addUnit(std::move(inpUnit));
     conveyor.addUnit(std::move(resUnit));
+    conveyor.addUnit(std::move(reduceUnit));
     conveyor.addUnit(std::move(outUnit));
 
     for (int dsNum=0; dsNum < datasetsNum; ++dsNum) {

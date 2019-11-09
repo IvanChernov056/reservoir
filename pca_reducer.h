@@ -9,7 +9,7 @@ namespace nn {
 
         private:
             Matrix_t    d_w;
-            int         d_d;
+            int         d_d{0};
     
         public:
             

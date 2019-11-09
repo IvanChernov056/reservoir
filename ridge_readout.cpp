@@ -20,10 +20,10 @@ namespace nn {
     }
 
     RidgeReadout::RidgeReadout(int i_in, int i_out, double i_ridge) :
-        d_ridge(i_ridge), d_w(i_out, i_in), d_b(i_out), d_neuronsCount(i_out) {}
+        d_w(i_out, i_in), d_b(i_out), d_neuronsCount(i_out), d_ridge(i_ridge) {}
     
     RidgeReadout::RidgeReadout(int i_out, double i_ridge) : 
-        d_neuronsCount(i_out) {}
+        d_neuronsCount(i_out), d_ridge(i_ridge) {}
 
     Column_t    RidgeReadout::operator()(const Column_t& i_x) {
         return d_w*i_x + d_b;
@@ -38,6 +38,7 @@ namespace nn {
 
             d_w = W.cols(0, i_inp[0].n_elem-1);
             d_b = W.col(i_inp[0].n_elem);
+            std::cout << "something\n";
         } catch (std::exception &e) {
             std::cout << e.what() << std::endl;
             return false;
