@@ -10,17 +10,15 @@ namespace nn {
 
     bool    Conveyor::fit (Data_t i_inp, int i_iterations) {
         std::cout << "fit stage :\n";
-        int     numUnits = d_units.size();
-        if (numUnits == 0)
-            return false;
-        
-        for (int unit = 0; unit < numUnits-1; ++unit) {
+        if (i_inp.empty()) return false;
+
+        for (auto& unit : d_units) {
             try {
-            if(!d_units[unit]->fit(i_inp, i_iterations))
-                return false;
-            i_inp = d_units[unit]->predict(i_inp);
+                if (!unit->fit(i_inp, i_iterations))
+                    return false;
+                if(unit != d_units.back())
+                    i_inp = unit->predict(i_inp);
             } catch (std::exception& e) {
-                std::cout << "IN UNIT " << unit << "happend : ";
                 std::cout << e.what() << std::endl;
                 throw;
             }
@@ -31,14 +29,21 @@ namespace nn {
 
     bool    Conveyor::learn (Data_t i_inp, const Data_t& i_out, int i_iterations) {
         std::cout << "learn stage :\n";
-        int     numUnits = d_units.size();
-        if (numUnits == 0)
-            return false;
-        
-        for (int unit = 0; unit < numUnits-1; ++unit) 
-            i_inp = d_units[unit]->predict(i_inp);
+        if (i_inp.empty()) return false;
 
-        return d_units[numUnits-1]->learn(i_inp, i_out, i_iterations);
+        for (auto& unit : d_units) {
+            try {
+                if (!unit->learn(i_inp, i_out, i_iterations))
+                    return false;
+                if(unit != d_units.back())
+                    i_inp = unit->predict(i_inp);
+            } catch (std::exception& e) {
+                std::cout << e.what() << std::endl;
+                throw;
+            }
+        }
+
+        return true;
     }
 
     Data_t  Conveyor::predict(Data_t i_inp) {

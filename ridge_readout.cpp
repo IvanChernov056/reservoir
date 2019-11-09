@@ -54,8 +54,8 @@ namespace nn {
             if(i_inp[0].empty()) throw std::runtime_error("data size is zero");
 
             int inpSize = i_inp[0].n_elem;
-            d_w = arma::randn<Matrix_t>(d_neuronsCount, inpSize);
-            d_b = arma::randn<Column_t>(d_neuronsCount);
+            d_w = Matrix_t(d_neuronsCount, inpSize);
+            d_b = Column_t(d_neuronsCount);
         } catch (std::exception& e) {
             std::cout << e.what() << std::endl;
             return false;
