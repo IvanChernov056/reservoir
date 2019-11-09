@@ -38,7 +38,7 @@ namespace nn {
         for (int unit = 0; unit < numUnits-1; ++unit) 
             i_inp = d_units[unit]->predict(i_inp);
 
-        return d_units[numUnits-1]->fit(i_inp, i_out, i_iterations);
+        return d_units[numUnits-1]->learn(i_inp, i_out, i_iterations);
     }
 
     Data_t  Conveyor::predict(Data_t i_inp) {
