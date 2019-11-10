@@ -16,6 +16,6 @@ using   Activation = void (*)(double &x);
 
 #include    <utility>
 using   DataSet = std::tuple<Data, Data, Data, Data, Data>;
-using   SettingsSet = std::tuple<int, int, int, int, int>;
+
 
 #endif

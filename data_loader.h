@@ -10,21 +10,21 @@
 namespace nn {
     class   DataLoader {
         private:
-
+            using   SettingsSet = std::tuple<int, int, int>;
             int                     d_ptr;
-            std::vector<double>     d_rawData;
+            std::vector<Column>     d_rawData;
             std::vector<DataSet>    d_datasets;
 
         public:
 
-            DataLoader (const std::string& i_name, int i_maxSize = static_cast<int>(1e6));
+            explicit DataLoader (const std::string& i_name, int i_maxSize = static_cast<int>(1e6));
 
             bool        formDataSet (const SettingsSet& i_sset);
             DataSet&    get(int i_setNum);
 
         private:
 
-            Data  readData (int i_ds, int i_ln, int);
+            Data  readData (int i_ln, int, int );
     };
 }
 

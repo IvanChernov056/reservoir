@@ -8,47 +8,51 @@ namespace nn {
         std::ifstream file (i_name);
         d_rawData.reserve(i_maxSize);
 
-        int i = 0;
+        int sampleCounter = 0;
         do{
-            double  tmp;
-            file >> tmp;
-            d_rawData.push_back(tmp);
-            ++i;
+            std::stringstream   strStream;
+            char line[1024];
+            file.getline(line, 1024);
+            strStream << line;
+            std::vector<double> vecData;
+            do {
+                double tmp;
+                strStream >> tmp;
+                vecData.push_back(tmp);
+            }
+            while (!strStream.eof());
+            
+            Column  vec(vecData.size());
+            for (int i = 0; i < vec.n_elem; ++i) 
+                vec[i] = vecData[i];
+            d_rawData.push_back(vec);
+            ++sampleCounter;
         }
-        while (!file.eof() && i < i_maxSize);
+        while (!file.eof() && sampleCounter < i_maxSize);
         file.close();
     }
-
+    
+    using   SettingsSet = std::tuple<int, int, int>;
     bool    DataLoader::formDataSet (const SettingsSet& i_sset) {
-        int inpSize, outSize, fitLen, learnLen, testLen;
-        std::tie (inpSize, outSize, fitLen, learnLen, testLen) = i_sset;
+        int fitLen, learnLen, testLen;
+        std::tie (fitLen, learnLen, testLen) = i_sset;
 
         DataSet     dataset;
-        std::get<0>(dataset) = std::move(readData(inpSize, fitLen, fitLen));
-        std::get<1>(dataset) = std::move(readData(inpSize, learnLen, inpSize));
-        std::get<2>(dataset) = std::move(readData(outSize, learnLen, learnLen-inpSize));
-        std::get<3>(dataset) = std::move(readData(inpSize, testLen, inpSize));
-        std::get<4>(dataset) = std::move(readData(outSize, testLen, testLen-inpSize));
+        std::get<0>(dataset) = std::move(readData(fitLen, fitLen, 0));
+        std::get<1>(dataset) = std::move(readData(learnLen, 0, 0));
+        std::get<2>(dataset) = std::move(readData(learnLen, learnLen, 1));
+        std::get<3>(dataset) = std::move(readData(testLen, 0, 0));
+        std::get<4>(dataset) = std::move(readData(testLen, testLen, 1));
 
         d_datasets.push_back(dataset);
         return true;
     }
 
-    Data  DataLoader::readData (int i_ds, int i_ln, int i_wh) {
-        Data  output;
-        Column    col(i_ds);
-        std::cout << "loader ptr : " << d_ptr;
-        if (d_ptr + i_ln*i_ds >= d_rawData.size()) throw std::runtime_error("not enough data");
-
-        for (int t = 0; t < i_ln; ++t) {
-            for (int i = 0; i < i_ds; ++i) 
-                col[i] = d_rawData[d_ptr + i + t];
-            output.push_back(col);
-        }
-
-        d_ptr += i_wh;
-        std::cout << ",  " << d_ptr << ", ln : " << i_ln << '\n';
-        return output;
+    Data  DataLoader::readData (int i_ln, int i_ptrBias, int i_oneZeroBias) {
+        auto firstElemIter = d_rawData.begin() + d_ptr + i_oneZeroBias;
+        auto lastElemIter = d_rawData.begin() + i_ln + d_ptr + i_oneZeroBias;
+        d_ptr += i_ptrBias;
+        return Data(firstElemIter, lastElemIter);
     }
 
 
