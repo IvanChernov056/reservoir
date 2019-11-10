@@ -27,4 +27,15 @@ namespace nn {
         }
         return std::make_tuple(err / T, min, max);
     }
+
+    std::vector<double> getErrorsVector (const Data& i_inp1, const Data& i_inp2, double (*i_localError)(const Column&, const Column&)) {
+        std::vector<double> errorsVector;
+        auto iter1 = i_inp1.begin(); 
+        auto iter2 = i_inp2.begin();
+        for (; iter1 != i_inp1.end() && iter2 != i_inp2.end(); ++iter1, ++iter2) {
+            double  locError = i_localError(*iter1, *iter2);
+            errorsVector.push_back(locError);
+        }
+        return errorsVector;
+    }
 }

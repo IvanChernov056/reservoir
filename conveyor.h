@@ -19,11 +19,14 @@ namespace nn {
 
             void addUnit (UnitPtr i_unit);
 
+            Column  operator() (const Column& i_x);
             bool    fit (Data i_inp, int i_iterations);
             bool    learn (Data i_inp, const Data& i_out, int iterations);
-            Data  predict (Data i_inp);
+            Data    predict (Data i_inp);
+            Data    predict (const Column& i_inp, int i_horizon);
 
-            bool    test(const DataSet& i_dataset, int i_iterations, std::ostream& io_os);
+            bool    testByExact(const DataSet& i_dataset, int i_iterations, std::ostream& io_os);
+            bool    testBySelf(const DataSet& i_dataset, int i_iterations, std::ostream& io_os);
     };
 }
 

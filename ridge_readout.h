@@ -17,7 +17,7 @@ namespace nn {
         public:
 
             RidgeReadout(int i_in, int i_out, double i_ridge = 0.03);
-            RidgeReadout(int i_out, double i_ridge);
+            explicit RidgeReadout(int i_out, double i_ridge = 0.03);
 
             Column    operator()(const Column& i_x) override;
             bool        learn(const Data& i_inp, const Data& i_out, int i_iterations = 1) override;

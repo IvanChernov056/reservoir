@@ -9,17 +9,18 @@
 
 int main (int argc, char* argv[]) {
 
-    nn::DataLoader  loader ("tadtd");
-    int         T1 = 3, T2 = 4, T3 = 2;
-    loader.formDataSet({T1, T2, T3});
-    loader.formDataSet({T1, T2, T3});
+    using namespace nn;
+    int         nr = 400, no = 1, t1 = 1500, t2 = 2000, t3 = 30;
+    DataLoader  loader("mgs1.dat");
 
+    Conveyor    conveyor;
 
-    DataSet ds1 = loader.get(0);
-    DATA_LOG(0, ds1);
-    DATA_LOG(1, ds1);
-    DATA_LOG(2, ds1);
-    DATA_LOG(3, ds1);
-    DATA_LOG(4, ds1);
+    std::unique_ptr<IUnit>  inpUnit(new SimpleLayer(nr));
+    std::unique_ptr<IUnit>  reservoirUnit(new ESNReservoir(nr));
+    std::unique_ptr<IUnit>  outUnit(new RidgeReadout(no, 0.03));
+
+    conveyor.addUnit(inpUnit);
+    conveyor.addUnit(reservoirUnit);
+    conveyor.addUnit(outUnit);
     return 0;
 }
