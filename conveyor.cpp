@@ -116,12 +116,12 @@ namespace nn {
         bool predictResult = !out.empty();
         std::cout << "predict result : " << (predictResult ? "success" : "fail") << '\n';
 
-        std::vector<double> errorsVector = getErrorsVector(out, std::get<4>(i_dataset), locMSRE);
+        std::vector<double> errorsVector = getErrorsVector(out, std::get<4>(i_dataset), locRelfMSRE);
         std::cout << "errors :\n";
         int sample = 0;
         do
             std::cout << sample+1 << " : " << errorsVector[sample] << '\n';
-        while(errorsVector[sample++] < 1 && sample < errorsVector.size());
+        while(errorsVector[sample++] < 0.1 && sample < errorsVector.size());
         return fitResult && learnResult && predictResult;
     }
 }

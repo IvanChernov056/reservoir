@@ -2,6 +2,13 @@
 
 
 namespace nn {
+    double  locRelfMSRE (const Column& i_inp1, const Column& i_inp2) {
+        double  n1 = arma::norm(i_inp1);
+        double  n2 = arma::norm(i_inp2);
+        double  err = arma::norm(i_inp1 - i_inp2);
+        return err / n1 > n2 ? n1 : n2;
+    }
+
     double locMSE (const Column& i_inp1, const Column& i_inp2) {
         Column e = i_inp2 - i_inp1;
         double  err = 0;
