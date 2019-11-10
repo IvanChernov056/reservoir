@@ -8,7 +8,7 @@ namespace nn {
 
         protected:
 
-            Matrix_t    d_w1;
+            Matrix    d_w1;
 
             int         d_neuronsCount;
 
@@ -16,9 +16,9 @@ namespace nn {
 
             SimpleLayer(int i_in, int i_out);
             SimpleLayer(int i_neuronsCount);
-            Column_t    operator()(const Column_t& i_x) override;
+            Column    operator()(const Column& i_x) override;
 
-            bool        fit (const Data_t& i_inp, int i_iterations = 1) override;
+            bool        fit (const Data& i_inp, int i_iterations = 1) override;
     };
 }
 #endif

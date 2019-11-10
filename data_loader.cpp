@@ -34,9 +34,9 @@ namespace nn {
         return true;
     }
 
-    Data_t  DataLoader::readData (int i_ds, int i_ln, int i_wh) {
-        Data_t  output;
-        Column_t    col(i_ds);
+    Data  DataLoader::readData (int i_ds, int i_ln, int i_wh) {
+        Data  output;
+        Column    col(i_ds);
         std::cout << "loader ptr : " << d_ptr;
         if (d_ptr + i_ln*i_ds >= d_rawData.size()) throw std::runtime_error("not enough data");
 

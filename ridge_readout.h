@@ -8,8 +8,8 @@ namespace nn {
     class   RidgeReadout : public IUnit {
         
         private:
-            Matrix_t    d_w;
-            Column_t    d_b;
+            Matrix    d_w;
+            Column    d_b;
 
             double      d_ridge;
             int         d_neuronsCount;
@@ -19,9 +19,9 @@ namespace nn {
             RidgeReadout(int i_in, int i_out, double i_ridge = 0.03);
             RidgeReadout(int i_out, double i_ridge);
 
-            Column_t    operator()(const Column_t& i_x) override;
-            bool        learn(const Data_t& i_inp, const Data_t& i_out, int i_iterations = 1) override;
-            bool        fit (const Data_t& i_inp, int i_iterations = 1) override;
+            Column    operator()(const Column& i_x) override;
+            bool        learn(const Data& i_inp, const Data& i_out, int i_iterations = 1) override;
+            bool        fit (const Data& i_inp, int i_iterations = 1) override;
     };
 }
 

@@ -8,7 +8,7 @@ namespace nn {
         d_units.push_back(std::move(i_unit));
     }
 
-    bool    Conveyor::fit (Data_t i_inp, int i_iterations) {
+    bool    Conveyor::fit (Data i_inp, int i_iterations) {
         std::cout << "fit stage :\n";
         if (i_inp.empty()) return false;
 
@@ -27,7 +27,7 @@ namespace nn {
         return true;
     }
 
-    bool    Conveyor::learn (Data_t i_inp, const Data_t& i_out, int i_iterations) {
+    bool    Conveyor::learn (Data i_inp, const Data& i_out, int i_iterations) {
         std::cout << "learn stage :\n";
         if (i_inp.empty()) return false;
 
@@ -46,7 +46,7 @@ namespace nn {
         return true;
     }
 
-    Data_t  Conveyor::predict(Data_t i_inp) {
+    Data  Conveyor::predict(Data i_inp) {
         std::cout << "predict stage :\n";
         for (const auto& unit : d_units) 
             i_inp = unit->predict(i_inp);
@@ -62,7 +62,7 @@ namespace nn {
         bool learnResult = learn(std::get<1>(i_dataset), std::get<2>(i_dataset), i_iterations);
         std::cout << "learn result : " << (learnResult ? "success" : "fail") << '\n';
 
-        Data_t  out = predict(std::get<3>(i_dataset));
+        Data  out = predict(std::get<3>(i_dataset));
         bool predictResult = !out.empty();
         std::cout << "predict result : " << (predictResult ? "success" : "fail") << '\n';
 

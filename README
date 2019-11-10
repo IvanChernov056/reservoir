@@ -1,0 +1,9 @@
+In reservoir2 we will change ALL types name in according with the new consept of names.
+Also we will chenge basic concept of predictiion to this:
+1)we will contain multidimentional time-series in file
+1)data file format will contain a dimention size, and one row of file will represent a vector which is a time-serieses element
+1)network will take n-th element and predict n+1-th element, so the input dimention and output dimention are equal
+1)we wil add two predict methods - one will predict based on given input and other will predict on its own output as a new input
+e.g. it will be iterations predict that will help as find prediction horizon
+
+To do this we'll chenge dataloader, conveyor and maybe units 

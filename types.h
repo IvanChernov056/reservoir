@@ -3,19 +3,19 @@
 
 
 #include    <armadillo>
-using   Matrix_t = arma::mat;
-using   Column_t = arma::vec;
-using   Row_t    = arma::rowvec;
-using   SpMat_t  = arma::sp_mat;
+using   Matrix = arma::mat;
+using   Column = arma::vec;
+using   Row    = arma::rowvec;
+using   SpMat  = arma::sp_mat;
 
 #include    <vector>
-using       Data_t = std::vector<Column_t>;
+using       Data = std::vector<Column>;
 
 
-using   Activation_t = void (*)(double &x);
+using   Activation = void (*)(double &x);
 
 #include    <utility>
-using   DataSet = std::tuple<Data_t, Data_t, Data_t, Data_t, Data_t>;
+using   DataSet = std::tuple<Data, Data, Data, Data, Data>;
 using   SettingsSet = std::tuple<int, int, int, int, int>;
 
 #endif

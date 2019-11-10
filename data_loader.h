@@ -24,7 +24,7 @@ namespace nn {
 
         private:
 
-            Data_t  readData (int i_ds, int i_ln, int);
+            Data  readData (int i_ds, int i_ln, int);
     };
 }
 

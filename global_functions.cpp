@@ -2,18 +2,18 @@
 
 
 namespace nn {
-    double locMSE (const Column_t& i_inp1, const Column_t& i_inp2) {
-        Column_t e = i_inp2 - i_inp1;
+    double locMSE (const Column& i_inp1, const Column& i_inp2) {
+        Column e = i_inp2 - i_inp1;
         double  err = 0;
         e.for_each([&err](double x){err += x*x;});
         return err/e.n_elem;
     }
 
-    double locMSRE (const Column_t& i_inp1, const Column_t& i_inp2) {
+    double locMSRE (const Column& i_inp1, const Column& i_inp2) {
         return sqrt(locMSE(i_inp1, i_inp2));
     }
 
-    std::tuple<double, double, double> globMSRE (const Data_t& i_inp1, const Data_t& i_inp2) {
+    std::tuple<double, double, double> globMSRE (const Data& i_inp1, const Data& i_inp2) {
         int T = i_inp1.size();
         if (T != i_inp2.size()) throw std::runtime_error("data lengthes are different");
 

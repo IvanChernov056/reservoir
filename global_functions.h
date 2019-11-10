@@ -8,8 +8,8 @@
 
 namespace nn {
     
-    double locMSRE (const Column_t& i_inp1, const Column_t& i_inp2);
-    std::tuple<double, double, double> globMSRE (const Data_t& i_inp1, const Data_t& i_inp2);
+    double locMSRE (const Column& i_inp1, const Column& i_inp2);
+    std::tuple<double, double, double> globMSRE (const Data& i_inp1, const Data& i_inp2);
 }
 
 #endif

@@ -8,8 +8,8 @@ namespace nn {
             return (i1 - i2 + N) % N;
         }
 
-        Column_t calc_map (int i_idx, double i_disp, int N) {
-            Column_t map(N);
+        Column calc_map (int i_idx, double i_disp, int N) {
+            Column map(N);
             for (int i = 0; i < N; ++i) 
                 map[i] = (i != i_idx) ? exp (-dist(i, i_idx, N)/i_disp) : 1;
             return map;
@@ -18,21 +18,21 @@ namespace nn {
 
 
     SomLayer::SomLayer(int i_in, int i_d, int i_out) : SimpleLayer(i_d, i_out), d_d(i_d) {
-        d_w2 = arma::randn<Matrix_t> (i_d, i_in);
+        d_w2 = arma::randn<Matrix> (i_d, i_in);
     }
 
     SomLayer::SomLayer(int i_d, int i_neuronsCount) : 
         SimpleLayer(i_d, i_neuronsCount), d_d(i_d) {}
 
-    Column_t SomLayer::operator()(const Column_t& i_x) {
-        Column_t h = d_w2*i_x;
+    Column SomLayer::operator()(const Column& i_x) {
+        Column h = d_w2*i_x;
         return SimpleLayer::operator()(h);
     }
 
-    bool  SomLayer::fit (const Data_t& i_inp, int i_iterations) {
+    bool  SomLayer::fit (const Data& i_inp, int i_iterations) {
         try {
             if (i_inp.empty()) throw std::runtime_error("input data is empty");
-            d_w2 = arma::randn<Matrix_t>(d_d, i_inp[0].n_elem);
+            d_w2 = arma::randn<Matrix>(d_d, i_inp[0].n_elem);
         } catch (std::exception& e) {
             std::cout << e.what() << std::endl;
             return false;
@@ -46,11 +46,11 @@ namespace nn {
         for (int iter = 0; iter < i_iterations; ++iter) {
             for (const auto& v : i_inp) {
                 // std::cout << "?>n";
-                Column_t h = d_w2*v;
+                Column h = d_w2*v;
                 // std::cout << "?<n";
                 int idx_max = h.index_max();
 
-                Column_t    map = calc_map(idx_max, disp, h.n_elem);
+                Column    map = calc_map(idx_max, disp, h.n_elem);
 
                 for (int i = 0; i < d_w2.n_rows; ++i) {
                     d_w2.row(i) += speed*map[i]*(v.t() - d_w2.row(i));

@@ -9,20 +9,20 @@ namespace nn {
 
         protected:
 
-            Matrix_t    d_wr;
+            Matrix    d_wr;
 
-            Column_t    d_state;
-            Column_t    d_b;
+            Column    d_state;
+            Column    d_b;
 
-            Activation_t    d_f;
+            Activation    d_f;
 
         public:
 
-            ESNReservoir(int i_nr, double i_radius = 1.0, double i_sp = 0.03, Activation_t i_f = [](double& x){x=1.0/(1 + exp(-x));});
+            ESNReservoir(int i_nr, double i_radius = 1.0, double i_sp = 0.03, Activation i_f = [](double& x){x=1.0/(1 + exp(-x));});
             ~ESNReservoir(){}
 
-            Column_t operator()(const Column_t& i_x) override;
-            bool    fit(const Data_t& i_inp, int iterations = 1) override;
+            Column operator()(const Column& i_x) override;
+            bool    fit(const Data& i_inp, int iterations = 1) override;
     };
 }
 #endif

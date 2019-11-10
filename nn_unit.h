@@ -11,17 +11,17 @@ namespace nn {
         public:
 
             virtual ~IUnit() {}
-            Data_t predict (const Data_t& i_inp) {
-                Data_t out;
+            Data predict (const Data& i_inp) {
+                Data out;
                 for (const auto& v: i_inp) {
                     out.push_back(operator()(v));
                 }
                 return out;
             }
-            virtual Column_t operator()(const Column_t& i_x) {return i_x;}
+            virtual Column operator()(const Column& i_x) {return i_x;}
 
-            virtual bool fit (const Data_t& i_inp, int i_iterations = 100) {return true;}
-            virtual bool learn (const Data_t& i_inp, const Data_t& i_out, int i_iterations = 100) {return true;}
+            virtual bool fit (const Data& i_inp, int i_iterations = 100) {return true;}
+            virtual bool learn (const Data& i_inp, const Data& i_out, int i_iterations = 100) {return true;}
     };
 }
 #endif

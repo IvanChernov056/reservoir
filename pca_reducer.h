@@ -8,15 +8,15 @@ namespace nn {
     class   PcaReducer : public IUnit {
 
         private:
-            Matrix_t    d_w;
+            Matrix    d_w;
             int         d_d{0};
     
         public:
             
             PcaReducer (){}
 
-            Column_t    operator()(const Column_t& i_x) override;
-            bool        fit(const Data_t& i_inp, int i_iterations = 1) override;
+            Column    operator()(const Column& i_x) override;
+            bool        fit(const Data& i_inp, int i_iterations = 1) override;
     };
 }
 
