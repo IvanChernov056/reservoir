@@ -5,8 +5,27 @@
 namespace nn {
 
     DataLoader::DataLoader (const std::string& i_name, int i_maxSize) : d_ptr(0) {
-        std::ifstream file (i_name);
-        d_rawData.reserve(i_maxSize);
+        
+    }
+    
+    bool DataLoader::readAsRow () {
+        std::ifstream file (d_fileName);
+        d_rawDoubleData.reserve(d_maxSize);
+
+        int i = 0;
+        do{
+            double  tmp;
+            file >> tmp;
+            d_rawDoubleData.push_back(tmp);
+            ++i;
+        }
+        while (!file.eof() && i < d_maxSize);
+        file.close();
+    }
+
+    bool    DataLoader::readAsTable() {
+        std::ifstream file (d_fileName);
+        d_rawColumnData.reserve(d_maxSize);
 
         int sampleCounter = 0;
         do{
@@ -25,13 +44,13 @@ namespace nn {
             Column  vec(vecData.size());
             for (int i = 0; i < vec.n_elem; ++i) 
                 vec[i] = vecData[i];
-            d_rawData.push_back(vec);
+            d_rawColumnData.push_back(vec);
             ++sampleCounter;
         }
-        while (!file.eof() && sampleCounter < i_maxSize);
+        while (!file.eof() && sampleCounter < d_maxSize);
         file.close();
     }
-    
+
     using   SettingsSet = std::tuple<int, int, int>;
     bool    DataLoader::formDataSet (const SettingsSet& i_sset) {
         int fitLen, learnLen, testLen;
@@ -49,8 +68,8 @@ namespace nn {
     }
 
     Data  DataLoader::readData (int i_ln, int i_ptrBias, int i_oneZeroBias) {
-        auto firstElemIter = d_rawData.begin() + d_ptr + i_oneZeroBias;
-        auto lastElemIter = d_rawData.begin() + i_ln + d_ptr + i_oneZeroBias;
+        auto firstElemIter = d_rawColumnData.begin() + d_ptr + i_oneZeroBias;
+        auto lastElemIter = d_rawColumnData.begin() + i_ln + d_ptr + i_oneZeroBias;
         d_ptr += i_ptrBias;
         return Data(firstElemIter, lastElemIter);
     }

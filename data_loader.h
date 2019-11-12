@@ -12,7 +12,10 @@ namespace nn {
         private:
             using   SettingsSet = std::tuple<int, int, int>;
             int                     d_ptr;
-            std::vector<Column>     d_rawData;
+            int                     d_maxSize;
+            std::string             d_fileName;
+            std::vector<double>     d_rawDoubleData;
+            std::vector<Column>     d_rawColumnData;
             std::vector<DataSet>    d_datasets;
 
         public:
@@ -21,6 +24,8 @@ namespace nn {
 
             bool        formDataSet (const SettingsSet& i_sset);
             DataSet&    get(int i_setNum);
+            bool        readAsRow();
+            bool        readAsTable();
 
         private:
 
