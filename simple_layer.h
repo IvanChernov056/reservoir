@@ -8,7 +8,7 @@ namespace nn {
 
         protected:
 
-            Matrix    d_w1;
+            Matrix    d_w;
 
             int         d_neuronsCount;
 

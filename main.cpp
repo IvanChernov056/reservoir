@@ -17,11 +17,13 @@ int main (int argc, char* argv[]) {
 
     Conveyor    conveyor;
 
-    std::unique_ptr<IUnit>  inpUnit(new SimpleLayer(nr));
+    std::unique_ptr<IUnit>  somUnit(new SomLayer(nr/4));
+    std::unique_ptr<IUnit>  simpleUnit(new SimpleLayer(nr));
     std::unique_ptr<IUnit>  reservoirUnit(new ESNReservoir(nr, 1.0 +0.5, 0.025));
     std::unique_ptr<IUnit>  outUnit(new RidgeReadout(no, 0.03));
 
-    conveyor.addUnit(std::move(inpUnit));
+    conveyor.addUnit(std::move(somUnit));
+    conveyor.addUnit(std::move(simpleUnit));
     conveyor.addUnit(std::move(reservoirUnit));
     conveyor.addUnit(std::move(outUnit));
 
@@ -30,6 +32,7 @@ int main (int argc, char* argv[]) {
             std::cout << "dataset #" << dsNum << '\n';
             loader.formDataSet({t1,t2,t3});
             conveyor.testBySelf(loader.get(dsNum), 500, outFile);
+            std::cout <<"\n\n";
         } catch(std::exception& e) {
             std::cout << "\n\t!!!something wrong!!!\n\t" << e.what() << "\n\n";
             break;

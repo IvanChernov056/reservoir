@@ -17,26 +17,14 @@ namespace nn {
     }
 
 
-    SomLayer::SomLayer(int i_in, int i_d, int i_out) : SimpleLayer(i_d, i_out), d_d(i_d) {
-        d_w2 = arma::randn<Matrix> (i_d, i_in);
-    }
+    SomLayer::SomLayer(int i_in, int i_out) : SimpleLayer(i_in, i_out) 
+        {}
 
-    SomLayer::SomLayer(int i_d, int i_neuronsCount) : 
-        SimpleLayer(i_d, i_neuronsCount), d_d(i_d) {}
-
-    Column SomLayer::operator()(const Column& i_x) {
-        Column h = d_w2*i_x;
-        return SimpleLayer::operator()(h);
-    }
+    SomLayer::SomLayer(int i_neuronsCount) : SimpleLayer(i_neuronsCount)
+        {}
 
     bool  SomLayer::fit (const Data& i_inp, int i_iterations) {
-        try {
-            if (i_inp.empty()) throw std::runtime_error("input data is empty");
-            d_w2 = arma::randn<Matrix>(d_d, i_inp[0].n_elem);
-        } catch (std::exception& e) {
-            std::cout << e.what() << std::endl;
-            return false;
-        }
+        if (!SimpleLayer::fit(i_inp, i_iterations)) return false;
 
         double  speed = 0.01;
         double  rd_sp = 0.8;
@@ -45,17 +33,13 @@ namespace nn {
 
         for (int iter = 0; iter < i_iterations; ++iter) {
             for (const auto& v : i_inp) {
-                // std::cout << "?>n";
-                Column h = d_w2*v;
-                // std::cout << "?<n";
+                Column h = d_w*v;
                 int idx_max = h.index_max();
 
                 Column    map = calc_map(idx_max, disp, h.n_elem);
 
-                for (int i = 0; i < d_w2.n_rows; ++i) {
-                    d_w2.row(i) += speed*map[i]*(v.t() - d_w2.row(i));
-                }
-
+                for (int i = 0; i < d_w.n_rows; ++i) 
+                    d_w.row(i) += speed*map[i]*(v.t() - d_w.row(i));
             }
 
             disp *= rd_dsp;
