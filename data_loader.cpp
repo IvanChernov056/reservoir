@@ -4,8 +4,11 @@
 
 namespace nn {
 
-    DataLoader::DataLoader (const std::string& i_name, int i_maxSize) : d_ptr(0) {
-        
+    DataLoader::DataLoader (const std::string& i_name, int i_maxSize, bool i_asTable) 
+        : d_fileName(i_name), d_maxSize(i_maxSize), d_ptr(0) {
+        if (i_asTable)
+            readAsTable();
+        else readAsRow();
     }
     
     bool DataLoader::readAsRow () {

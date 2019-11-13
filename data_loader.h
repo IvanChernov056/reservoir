@@ -20,7 +20,7 @@ namespace nn {
 
         public:
 
-            explicit DataLoader (const std::string& i_name, int i_maxSize = static_cast<int>(1e6));
+            explicit DataLoader (const std::string& i_name, int i_maxSize = static_cast<int>(1e6), bool i_asTable = true);
 
             bool        formDataSet (const SettingsSet& i_sset);
             DataSet&    get(int i_setNum);
