@@ -11,7 +11,7 @@ int main (int argc, char* argv[]) {
 
     using namespace nn;
     int         datasetsNumber = 3;
-    int         nr = 400, no = 1, t1 = 1500, t2 = 2000, t3 = 30;
+    int         nr = 400, no = 1, t1 = 5, t2 = 5, t3 = 5;
     DataLoader  loader("mgs1.dat");
     std::ofstream   outFile;
 
@@ -27,16 +27,15 @@ int main (int argc, char* argv[]) {
     conveyor.addUnit(std::move(reservoirUnit));
     conveyor.addUnit(std::move(outUnit));
 
-    for (int dsNum = 0; dsNum < datasetsNumber; ++dsNum) {
-        try {
-            std::cout << "dataset #" << dsNum << '\n';
-            loader.formDataSet({t1,t2,t3});
-            conveyor.testBySelf(loader.get(dsNum), 500, outFile);
-            std::cout <<"\n\n";
-        } catch(std::exception& e) {
-            std::cout << "\n\t!!!something wrong!!!\n\t" << e.what() << "\n\n";
-            break;
-        }
+    try {
+        loader.formDelaySet(2, t1, t2, t3);
+        loader.formDelaySet(2, t1, t2, t3);
+        DATA_LOG(4, loader.get());
+        std::cout << '\n';
+        DATA_LOG(0, loader.get(1));
+        std::cout << '\n';
+    } catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
     }
 
     if (outFile.is_open()) outFile.close();

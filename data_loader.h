@@ -8,28 +8,32 @@
 #include    <string>
 
 namespace nn {
-    class   DataLoader {
+
+    enum    Mode {
+        NON,
+        TABLE,
+        DELAY
+    };
+
+    class DataLoader {
+
         private:
-            using   SettingsSet = std::tuple<int, int, int>;
-            int                     d_ptr;
-            int                     d_maxSize;
-            std::string             d_fileName;
-            std::vector<double>     d_rawDoubleData;
-            std::vector<Column>     d_rawColumnData;
-            std::vector<DataSet>    d_datasets;
+            int                     d_ptr{0};
+            int                     d_mode{NON}; 
+            std::vector<double>     d_data;
+            std::vector<DataSet>    d_sets;
+
 
         public:
 
-            explicit DataLoader (const std::string& i_name, int i_maxSize = static_cast<int>(1e6), bool i_asTable = true);
+            DataLoader (const std::string& i_fileName, int i_maxSize = static_cast<int>(1e6));
+            void    formTableSet(int i_dataSize, int i_fitLen, int i_learnLen, int i_testLen);
+            void    formDelaySet(int i_inpSize, int i_fitLen, int i_learnLen, int i_testLen);
 
-            bool        formDataSet (const SettingsSet& i_sset);
-            DataSet&    get(int i_setNum);
-            bool        readAsRow();
-            bool        readAsTable();
-
+            DataSet& get(int i_num = 0);
         private:
 
-            Data  readData (int i_ln, int, int );
+            Column  makeColumn(int i_size, int i_bias);
     };
 }
 

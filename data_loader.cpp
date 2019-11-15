@@ -4,81 +4,108 @@
 
 namespace nn {
 
-    DataLoader::DataLoader (const std::string& i_name, int i_maxSize, bool i_asTable) 
-        : d_fileName(i_name), d_maxSize(i_maxSize), d_ptr(0) {
-        if (i_asTable)
-            readAsTable();
-        else readAsRow();
-    }
-    
-    bool DataLoader::readAsRow () {
-        std::ifstream file (d_fileName);
-        d_rawDoubleData.reserve(d_maxSize);
-
-        int i = 0;
-        do{
-            double  tmp;
-            file >> tmp;
-            d_rawDoubleData.push_back(tmp);
-            ++i;
-        }
-        while (!file.eof() && i < d_maxSize);
-        file.close();
-    }
-
-    bool    DataLoader::readAsTable() {
-        std::ifstream file (d_fileName);
-        d_rawColumnData.reserve(d_maxSize);
-
-        int sampleCounter = 0;
-        do{
-            std::stringstream   strStream;
-            char line[1024];
-            file.getline(line, 1024);
-            strStream << line;
-            std::vector<double> vecData;
+    DataLoader::DataLoader (const std::string& i_fileName, int i_maxSize) {
+        std::ifstream file(i_fileName);
+        int counter = 0;
+        if (file.is_open())
             do {
-                double tmp;
-                strStream >> tmp;
-                vecData.push_back(tmp);
-            }
-            while (!strStream.eof());
-            
-            Column  vec(vecData.size());
-            for (int i = 0; i < vec.n_elem; ++i) 
-                vec[i] = vecData[i];
-            d_rawColumnData.push_back(vec);
-            ++sampleCounter;
+                double doubleReader;
+                file >> doubleReader;
+                if (!file.fail() && !file.bad())
+                    d_data.push_back(doubleReader);
+                else break;
+            }while (!file.eof());
+        else std::cout << "file \'" << i_fileName << "\' was not opened\n"; 
+    }
+
+    void    DataLoader::formTableSet(int i_dataSize, int i_fitLen, int i_learnLen, int i_testLen) {
+        if (d_mode != TABLE && d_mode != NON) {
+            std::cout << "this reader in another mode now. You can not form table data\n";
+            return;
         }
-        while (!file.eof() && sampleCounter < d_maxSize);
-        file.close();
+
+        try {
+            DataSet tableSet;
+
+            for (int i= 0; i < i_fitLen; ++i)
+                std::get<0>(tableSet).push_back (std::move(makeColumn(i_dataSize, i*i_dataSize)));
+            d_ptr += i_fitLen*i_dataSize;
+
+            for (int i= 0; i < i_learnLen; ++i)
+                std::get<1>(tableSet).push_back (std::move(makeColumn(i_dataSize, i*i_dataSize)));
+            d_ptr += i_dataSize;
+
+            for (int i= 0; i < i_learnLen; ++i)
+                std::get<2>(tableSet).push_back (std::move(makeColumn(i_dataSize, i*i_dataSize)));
+            d_ptr += i_dataSize*(i_learnLen-1);
+
+            for (int i= 0; i < i_testLen; ++i)
+                std::get<3>(tableSet).push_back (std::move(makeColumn(i_dataSize, i*i_dataSize)));
+            d_ptr += i_dataSize;
+
+            for (int i= 0; i < i_testLen; ++i)
+                std::get<4>(tableSet).push_back (std::move(makeColumn(i_dataSize, i*i_dataSize)));
+            d_ptr += i_dataSize*(i_testLen-1);
+            
+            d_sets.push_back(std::move(tableSet));
+        } catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
+            throw;
+        }
+
+        d_mode = TABLE;
     }
 
-    using   SettingsSet = std::tuple<int, int, int>;
-    bool    DataLoader::formDataSet (const SettingsSet& i_sset) {
-        int fitLen, learnLen, testLen;
-        std::tie (fitLen, learnLen, testLen) = i_sset;
+    void    DataLoader::formDelaySet (int i_inpSize, int i_fitLen, int i_learnLen, int i_testLen) {
+        if (d_mode != DELAY && d_mode != NON) {
+            std::cout << "this reader in another mode now. You can not form delay data\n";
+            return;
+        }
 
-        DataSet     dataset;
-        std::get<0>(dataset) = std::move(readData(fitLen, fitLen, 0));
-        std::get<1>(dataset) = std::move(readData(learnLen, 0, 0));
-        std::get<2>(dataset) = std::move(readData(learnLen, learnLen, 1));
-        std::get<3>(dataset) = std::move(readData(testLen, 0, 0));
-        std::get<4>(dataset) = std::move(readData(testLen, testLen, 1));
+        try {
+            DataSet delaySet;
 
-        d_datasets.push_back(dataset);
-        return true;
+            for (int i= 0; i < i_fitLen; ++i)
+                std::get<0>(delaySet).push_back (std::move(makeColumn(i_inpSize, i)));
+            d_ptr += i_fitLen;
+
+            for (int i= 0; i < i_learnLen; ++i)
+                std::get<1>(delaySet).push_back (std::move(makeColumn(i_inpSize, i)));
+            
+
+            for (int i= 0; i < i_learnLen; ++i)
+                std::get<2>(delaySet).push_back (std::move(makeColumn(1, i+i_inpSize)));
+            d_ptr += (i_learnLen-1) + 1;
+
+            for (int i= 0; i < i_testLen; ++i)
+                std::get<3>(delaySet).push_back (std::move(makeColumn(i_inpSize, i)));
+            
+
+            for (int i= 0; i < i_testLen; ++i)
+                std::get<4>(delaySet).push_back (std::move(makeColumn(1, i+i_inpSize)));
+            d_ptr += (i_testLen-1) + 1;
+            
+            d_sets.push_back(std::move(delaySet));
+        } catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
+            throw;
+        }
+
+        d_mode = DELAY;
+    }
+    Column  DataLoader::makeColumn (int i_size, int i_bias) {
+        if (i_bias + d_ptr + i_size >= d_data.size())
+            throw std::runtime_error("not enough data to form list");
+        Column col(i_size);
+        for(int i = 0; i < i_size; ++i) 
+            col[i] = d_data[d_ptr + i_bias + i];
+        
+        return col;
     }
 
-    Data  DataLoader::readData (int i_ln, int i_ptrBias, int i_oneZeroBias) {
-        auto firstElemIter = d_rawColumnData.begin() + d_ptr + i_oneZeroBias;
-        auto lastElemIter = d_rawColumnData.begin() + i_ln + d_ptr + i_oneZeroBias;
-        d_ptr += i_ptrBias;
-        return Data(firstElemIter, lastElemIter);
-    }
-
-
-    DataSet&    DataLoader::get(int i_setNum) {
-        return d_datasets[i_setNum];
+    DataSet& DataLoader::get(int i_num) {
+        if (i_num < 0 || i_num >= d_sets.size())
+            throw std::runtime_error("out of range");
+        return d_sets[i_num];
     }
 }
