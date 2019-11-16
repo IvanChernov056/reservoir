@@ -4,10 +4,32 @@
 
 namespace nn {
 
+    int getDataSize(std::ifstream& io_s, std::vector<double>& o_data) {
+        char* line = new char[2048];
+        io_s.getline(line, 2048);
+        std::stringstream stream;
+        stream << line;
+        delete line;
+
+        int dataSize = 0;
+        do {
+            double tmp;
+            stream >> tmp;
+            if (!stream.fail() && !stream.bad()) {
+                ++dataSize;
+                o_data.push_back(tmp);
+            }
+            else break;
+        } while (!stream.eof());
+
+        return dataSize;
+    }
+
     DataLoader::DataLoader (const std::string& i_fileName, int i_maxSize) {
         std::ifstream file(i_fileName);
         int counter = 0;
-        if (file.is_open())
+        if (file.is_open()) {
+            d_dataSize = getDataSize(file, d_data);
             do {
                 double doubleReader;
                 file >> doubleReader;
@@ -15,10 +37,11 @@ namespace nn {
                     d_data.push_back(doubleReader);
                 else break;
             }while (!file.eof());
+        }
         else std::cout << "file \'" << i_fileName << "\' was not opened\n"; 
     }
 
-    void    DataLoader::formTableSet(int i_dataSize, int i_fitLen, int i_learnLen, int i_testLen) {
+    void    DataLoader::formTableSet(int i_fitLen, int i_learnLen, int i_testLen, int i_dataSize) {
         if (d_mode != TABLE && d_mode != NON) {
             std::cout << "this reader in another mode now. You can not form table data\n";
             return;
@@ -54,6 +77,13 @@ namespace nn {
         }
 
         d_mode = TABLE;
+    }
+
+    void    DataLoader::formTableSet(int i_fitLen, int i_learnLen, int i_testLen) {
+        if (d_dataSize > 0)
+            formTableSet(i_fitLen, i_learnLen, i_testLen, d_dataSize);
+        else 
+            std::cout << "cannot define data size\n";
     }
 
     void    DataLoader::formDelaySet (int i_inpSize, int i_fitLen, int i_learnLen, int i_testLen) {

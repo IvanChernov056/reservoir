@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
     using namespace nn;
     int         datasetsNumber = 3;
     int         nr = 400, no = 1, t1 = 5, t2 = 5, t3 = 5;
-    DataLoader  loader("mgs1.dat");
+    DataLoader  loader("THIS MUST BE DELETED2.dat");
     std::ofstream   outFile;
 
     Conveyor    conveyor;
@@ -28,8 +28,8 @@ int main (int argc, char* argv[]) {
     conveyor.addUnit(std::move(outUnit));
 
     try {
-        loader.formDelaySet(2, t1, t2, t3);
-        loader.formDelaySet(2, t1, t2, t3);
+        loader.formTableSet(t1, t2, t3);
+        loader.formTableSet(t1, t2, t3);
         DATA_LOG(4, loader.get());
         std::cout << '\n';
         DATA_LOG(0, loader.get(1));
