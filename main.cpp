@@ -11,33 +11,21 @@ int main (int argc, char* argv[]) {
 
     using namespace nn;
     int         datasetsNumber = 3;
-    int         nr = 400, no = 1, t1 = 5, t2 = 5, t3 = 5;
-    DataLoader  loader("THIS MUST BE DELETED2.dat");
+    int         nr = 400, no = 1, t1 = 0, t2 = 1000, t3 = 100;
+    DataLoader  loader("mgs1.dat");
     std::ofstream   outFile;
 
-    Conveyor    conveyor;
-
-    std::unique_ptr<IUnit>  somUnit(new SomLayer(nr/4));
-    std::unique_ptr<IUnit>  simpleUnit(new SimpleLayer(nr));
-    std::unique_ptr<IUnit>  reservoirUnit(new ESNReservoir(nr, 1.0 +0.5, 0.025));
-    std::unique_ptr<IUnit>  outUnit(new RidgeReadout(no, 0.03));
-
-    conveyor.addUnit(std::move(somUnit));
-    conveyor.addUnit(std::move(simpleUnit));
-    conveyor.addUnit(std::move(reservoirUnit));
-    conveyor.addUnit(std::move(outUnit));
 
     try {
-        loader.formTableSet(t1, t2, t3);
-        loader.formTableSet(t1, t2, t3);
-        DATA_LOG(4, loader.get());
-        std::cout << '\n';
-        DATA_LOG(0, loader.get(1));
-        std::cout << '\n';
-    } catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
+        loader.formDelaySet (20, t1, t2, t3);
+        Ssa ssa(std::get<1>(loader.get(0)));
+        auto out = ssa.predict(t3, 40);
+        auto err = fn::globMSRE(out ,std::get<4>(loader.get(0)));
+        std::cout << std::get<0>(err) << ' ' << std::get<2>(err) << std::endl;
+    } catch (...) {
+        std::cout << "BOOM\n";
     }
-
+    
     if (outFile.is_open()) outFile.close();
     return 0;
 }

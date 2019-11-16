@@ -1,7 +1,7 @@
 #include    "global_functions.h"
 
 
-namespace nn {
+namespace fn {
     double  locRelfMSRE (const Column& i_inp1, const Column& i_inp2) {
         double  n1 = arma::norm(i_inp1);
         double  n2 = arma::norm(i_inp2);
@@ -44,5 +44,45 @@ namespace nn {
             errorsVector.push_back(locError);
         }
         return errorsVector;
+    }
+
+    Matrix    formMatrix (const Data& i_inp, bool i_withOnes) {
+            int T = i_inp.size();
+            int N = i_inp[0].n_elem;
+
+            Matrix    S(N, T);
+            for (int t = 0; t < T; t++) 
+                S.col(t) = i_inp[t];
+            
+            if (i_withOnes) {
+                Row   ones = arma::ones<Row>(T);
+                return  arma::join_cols (S, ones);
+            } 
+            return S;
+        }
+    Matrix  getCovMat(const Data& i_inp) {
+        Matrix    X = formMatrix(i_inp);
+        Column    mean(X.n_rows, arma::fill::zeros);
+        X.each_col([&mean](const auto& v){mean += v;});
+        mean /= (double)X.n_cols;
+        X.each_col([&mean](Column& v){v -= mean;});
+        Matrix    covMat = X*X.t() / (double)X.n_cols;
+
+        return covMat;
+    }
+
+    Matrix  pcaReduce (const Matrix& i_covMat, double i_criterion) {
+        Matrix    eigVec;
+        Column    eigVal;
+        arma::eig_sym(eigVal, eigVec, i_covMat);
+
+        Data      condidates;
+        for (int i = 0; i < eigVal.n_elem; ++i) {
+            if(eigVal[i] > i_criterion)
+                condidates.push_back((Column)eigVec.col(i));
+        }
+
+        if (condidates.size() <= 0) throw std::runtime_error("reduced to null, choose another criterion");
+        return fn::formMatrix(condidates);
     }
 }

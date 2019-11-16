@@ -1,24 +1,10 @@
 #include    "ridge_readout.h"
+#include    "global_functions.h"
+
 
 namespace nn {
 
-    namespace {
-        static Matrix    formMatrix (const Data& i_inp, bool i_withOnes = false) {
-            int T = i_inp.size();
-            int N = i_inp[0].n_elem;
-
-            Matrix    S(N, T);
-            for (int t = 0; t < T; t++) 
-                S.col(t) = i_inp[t];
-            
-            if (i_withOnes) {
-                Row   ones = arma::ones<Row>(T);
-                return  arma::join_cols (S, ones);
-            } 
-            return S;
-        }
-    }
-
+   
     RidgeReadout::RidgeReadout(int i_in, int i_out, double i_ridge) :
         d_w(i_out, i_in), d_b(i_out), d_neuronsCount(i_out), d_ridge(i_ridge) {}
     
@@ -31,8 +17,8 @@ namespace nn {
 
     bool    RidgeReadout::learn (const Data& i_inp, const Data& i_out, int iterations) {
         try{
-            Matrix    X = formMatrix(i_inp, true);
-            Matrix    Y = formMatrix(i_out, false);
+            Matrix    X = fn::formMatrix(i_inp, true);
+            Matrix    Y = fn::formMatrix(i_out, false);
 
             Matrix    W = Y*X.t()*arma::inv(X*X.t() + d_ridge*arma::eye(X.n_rows, X.n_rows));
 

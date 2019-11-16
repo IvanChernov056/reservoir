@@ -89,7 +89,7 @@ namespace nn {
         bool predictResult = !out.empty();
         std::cout << "predict result : " << (predictResult ? "success" : "fail") << '\n';
 
-        auto    errors = globMSRE (out, std::get<4>(i_dataset));
+        auto    errors = fn::globMSRE (out, std::get<4>(i_dataset));
 
         io_os << std::get<0>(errors) << " \t" << std::get<1>(errors) << " \t" << std::get<2>(errors) << " \t" << timer.stop() << '\n';
         std::cout << "Errors :  glob = " 
@@ -116,7 +116,7 @@ namespace nn {
         bool predictResult = !out.empty();
         std::cout << "predict result : " << (predictResult ? "success" : "fail") << '\n';
 
-        std::vector<double> errorsVector = getErrorsVector(out, std::get<4>(i_dataset), locMSRE);
+        std::vector<double> errorsVector = fn::getErrorsVector(out, std::get<4>(i_dataset), fn::locMSRE);
         std::cout << "errors :\n";
         int sample = 0;
         do
