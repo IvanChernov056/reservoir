@@ -74,3 +74,7 @@ Data Ssa::predict(int i_horizon, int i_refit) {
     }
     return output;
 }
+
+Matrix  formDelayMatrix (const std::vector<double>& i_inp, int i_startPoint = 0) {
+    return Matrix();
+}

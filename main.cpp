@@ -19,7 +19,7 @@ int main (int argc, char* argv[]) {
     try {
         loader.formDelaySet (20, t1, t2, t3);
         Ssa ssa(std::get<1>(loader.get(0)));
-        auto out = ssa.predict(t3, 40);
+        auto out = ssa.predict(t3, 10);
         auto err = fn::globMSRE(out ,std::get<4>(loader.get(0)));
         std::cout << std::get<0>(err) << ' ' << std::get<2>(err) << std::endl;
     } catch (...) {

@@ -63,9 +63,9 @@ namespace fn {
     Matrix  getCovMat(const Data& i_inp) {
         Matrix    X = formMatrix(i_inp);
         Column    mean(X.n_rows, arma::fill::zeros);
-        X.each_col([&mean](const auto& v){mean += v;});
-        mean /= (double)X.n_cols;
-        X.each_col([&mean](Column& v){v -= mean;});
+        // X.each_col([&mean](const auto& v){mean += v;});
+        // mean /= (double)X.n_cols;
+        // X.each_col([&mean](Column& v){v -= mean;});
         Matrix    covMat = X*X.t() / (double)X.n_cols;
 
         return covMat;

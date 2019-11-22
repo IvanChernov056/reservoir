@@ -14,6 +14,9 @@ class Ssa {
         Column  d_q;
         Column  d_newX;
         Data    d_data;
+        
+        int     d_delay{1};
+        int     d_length{1};
 
     public:
 
@@ -28,6 +31,7 @@ class Ssa {
         Column  oneStepPredict ();
         Column& formQStat();
         Column& formNewX(double i_value);
+        Matrix  formDelayMatrix (const std::vector<double>& i_inp, int i_startPoint = 0);
 };
 
 #endif
