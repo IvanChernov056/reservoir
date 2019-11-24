@@ -1,6 +1,8 @@
 #ifndef     TYPES_H
 #define     TYPES_H
 
+#include    "omp.h"
+
 
 #include    <armadillo>
 using   Matrix = arma::mat;

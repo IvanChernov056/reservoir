@@ -10,8 +10,10 @@ namespace nn {
 
         Column calc_map (int i_idx, double i_disp, int N) {
             Column map(N);
-            for (int i = 0; i < N; ++i) 
+        // #pragma omp parallel for
+            for (int i = 0; i < N; ++i) {
                 map[i] = (i != i_idx) ? exp (-dist(i, i_idx, N)/i_disp) : 1;
+            }
             return map;
         }
     }
@@ -38,8 +40,10 @@ namespace nn {
 
                 Column    map = calc_map(idx_max, disp, h.n_elem);
 
-                for (int i = 0; i < d_w.n_rows; ++i) 
+            // #pragma omp parallel for
+                for (int i = 0; i < d_w.n_rows; ++i) {
                     d_w.row(i) += speed*map[i]*(v.t() - d_w.row(i));
+                }
             }
 
             disp *= rd_dsp;

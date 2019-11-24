@@ -9,23 +9,35 @@
 
 int main (int argc, char* argv[]) {
 
-    using namespace nn;
-    int         datasetsNumber = 3;
-    int         nr = 400, no = 1, t1 = 0, t2 = 1000, t3 = 100;
-    DataLoader  loader("mgs1.dat");
-    std::ofstream   outFile;
-
-
-    try {
-        loader.formDelaySet (20, t1, t2, t3);
-        Ssa ssa(std::get<1>(loader.get(0)));
-        auto out = ssa.predict(t3, 10);
-        auto err = fn::globMSRE(out ,std::get<4>(loader.get(0)));
-        std::cout << std::get<0>(err) << ' ' << std::get<2>(err) << std::endl;
-    } catch (...) {
-        std::cout << "BOOM\n";
-    }
+   
+    int         datasetsNum = 1;
+    int         ni = 1, nr = 400, no = 1, T1 = 1500, T2 = 2000, T3 = 200;
+    std::ofstream   outFile("THIS MUST BE DELETED.dat");
     
-    if (outFile.is_open()) outFile.close();
+    nn::DataLoader  dataLoader ("mgs1.dat");
+
+    nn::Conveyor conveyor;
+
+    std::unique_ptr<nn::IUnit> inpUnit (new nn::SomLayer(ni, nr));    //nr/4
+    std::unique_ptr<nn::IUnit> resUnit (new nn::ESNReservoir(nr));
+    std::unique_ptr<nn::IUnit> outUnit (new nn::RidgeReadout(no, 0.03));
+
+    conveyor.addUnit(std::move(inpUnit));
+    conveyor.addUnit(std::move(resUnit));
+    conveyor.addUnit(std::move(outUnit));
+
+    for (int dsNum=0; dsNum < datasetsNum; ++dsNum) {
+        try {
+            std::cout << "dataset #" << dsNum << '\n';
+            dataLoader.formTableSet(T1, T2, T3);
+            conveyor.testByExact(dataLoader.get(dsNum), 500, outFile);
+            std::cout << "\n\n";
+        } catch (std::exception& e) {
+            std::cout << e.what() << std::endl;
+            break;
+        }
+    }
+    outFile.close();
+    
     return 0;
 }
