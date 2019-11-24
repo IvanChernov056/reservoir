@@ -1,7 +1,67 @@
 #include    "global_functions.h"
-
+#include    <algorithm>
 
 namespace fn {
+
+    Column  avaragner (const Data& i_x) {
+        if (i_x.empty()) throw std::runtime_error("avaranger func : list is empty");
+        Column avrg = i_x[0];
+        for (auto v = i_x.begin()+1; v != i_x.end(); ++v)
+            avrg += *v;
+        return avrg / i_x.size();
+    }
+
+    double  avaragner (const std::vector<double>& i_x) {
+        if (i_x.empty()) throw std::runtime_error("avaranger func : list is empty");
+        double avrg = i_x[0];
+        for (auto v = i_x.begin()+1; v != i_x.end(); ++v)
+            avrg += *v;
+        return avrg / i_x.size();
+    }
+
+    double  squaredNorm (const Column& i_x){
+        double sqNorm = 0.0;
+        i_x.for_each([&sqNorm](double x){
+            sqNorm += x*x;
+        });
+        return sqNorm;
+    }
+
+
+    double  nrmse (const Data& i_predict, const Data& i_exact) {
+    
+        Column  exAvrg = avaragner(i_exact);
+    
+        std::vector<double> numeratorData(i_predict.size());
+        std::transform(i_predict.begin(), 
+                    i_predict.end(), 
+                    i_exact.begin(), 
+                    numeratorData.begin(), 
+                    [](const Column& u, const Column& v)
+                    {
+                        return squaredNorm(u - v);
+                    });
+    
+        std::vector<double> denumeratorData(i_predict.size());
+        std::transform(i_predict.begin(), 
+                    i_predict.end(), 
+                    denumeratorData.begin(), 
+                    [&exAvrg](const Column& u)
+                    {
+                        return squaredNorm(u - exAvrg);
+                    }); 
+    
+        double  numerator = avaragner(numeratorData);
+    
+        double  denumerator = avaragner(denumeratorData);
+    
+        if (denumerator <= 0) throw std::runtime_error("nrmse :: denumenator less then 0");
+    
+        return sqrt (numerator/ denumerator);
+    }
+
+
+
     double  locRelfMSRE (const Column& i_inp1, const Column& i_inp2) {
         double  n1 = arma::norm(i_inp1);
         double  n2 = arma::norm(i_inp2);

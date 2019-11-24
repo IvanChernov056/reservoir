@@ -90,12 +90,14 @@ namespace nn {
         std::cout << "predict result : " << (predictResult ? "success" : "fail") << '\n';
 
         auto    errors = fn::globMSRE (out, std::get<4>(i_dataset));
+        double  nrmse = fn::nrmse(out, std::get<4>(i_dataset));
 
         io_os << std::get<0>(errors) << " \t" << std::get<1>(errors) << " \t" << std::get<2>(errors) << " \t" << timer.stop() << '\n';
         std::cout << "Errors :  glob = " 
                 << std::get<0>(errors) 
                 << ", \tmin = " << std::get<1>(errors) 
                 << ", \t max = " << std::get<2>(errors) 
+                << ", \t NRMSE = " << nrmse
                 << '\n';
 
         for (int i = 0; i < 10; ++i)

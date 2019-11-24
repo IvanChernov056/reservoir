@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
 
     nn::Conveyor conveyor;
 
-    std::unique_ptr<nn::IUnit> inpUnit (new nn::SomLayer(ni, nr));    //nr/4
+    std::unique_ptr<nn::IUnit> inpUnit (new nn::SimpleLayer(ni, nr));    //nr/4
     std::unique_ptr<nn::IUnit> resUnit (new nn::ESNReservoir(nr));
     std::unique_ptr<nn::IUnit> outUnit (new nn::RidgeReadout(no, 0.03));
 
